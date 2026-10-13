@@ -344,8 +344,8 @@ function Plot_info_imb()
     values_fit = values[4:L_val]
     values_pred = values[L_val+4:2*L_val]
     x_bar = collect(4:L_val) .* 2
-    x_label = [L"\hat{\theta}^1", L"\hat{\theta}^2",
-               L"\hat{\theta}^3", L"\theta"]
+    x_label = [L"\hat{\theta}^{(1)}", L"\hat{\theta}^{(2)}",
+               L"\hat{\theta}^{(3)}", L"\theta"]
     xt = (x_bar, x_label)
 
 

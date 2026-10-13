@@ -14,37 +14,46 @@ include("Print_Sloppy_Analysis_Table.jl")
 
 
 function Plot_info_imb()
-    @load "$path\\Δ.jld2" Δ   
-    x_label = vcat([latexstring("\\hat{\\theta}^{($i)}") for i in 1:12],
-                   [L"\theta"])
+    @load "$path\\Δ.jld2" Δ
 
     values = Δ
-    L_val = Int(length(values)/2)
-    values_fit = values[1:L_val]
+    L_val = length(values) ÷ 2
+    values_fit  = values[1:L_val]
     values_pred = values[L_val+1:end]
-    x_bar = collect(1:L_val) 
+
+    x_bar = collect(1:L_val)
+    x_label = vcat(
+        [latexstring("\\hat{\\theta}^{($i)}") for i in 1:L_val-1],
+        [L"\theta"]
+    )
     xt = (x_bar, x_label)
+    bar_colors = vcat(fill(:green, L_val-1), [:red])
 
+    common = (
+        xticks = xt,
+        tickfontsize = 10,
+        labelfontsize = 12,
+        titlefontsize = 12,
+        yticks = (0:0.2:1.0, [L"0.0", L"0.2", L"0.4", L"0.6", L"0.8", L"1.0"]),
+        ylabel = L"\Delta",
+        xrotation = 45,
+        ylims = (0, 1.1),
+        grid = false,
+        legend = false,
+        color = bar_colors,
+        bottom_margin = 18mm
+    )
 
-    bar_colors = vcat(fill(:green, 12),fill(:red, 1))
-
-    p_fit = bar(x_bar, values_fit, xticks = xt,
-                yticks = (0:0.2:1.0,[L"0.0", L"0.2", L"0.4", L"0.6", L"0.8", L"1.0"]),
-                tickfontsize = 10, labelfontsize = 12, titlefontsize = 12,
-                ylabel = L"\Delta", xrotation = 0, ylims = (0, 1.1), grid = false,
-                legend = false, color = bar_colors, bottom_margin = 8mm)
-    annotate!(p_fit,-2, 1.3, text(L"(a)", :left, 12))
+    p_fit = bar(x_bar, values_fit; common...)
+    annotate!(p_fit, -2, 1.25, text(L"(a)", :left, 12))
     annotate!(p_fit, 6.35, 1.2, text(L"y_{\mathrm{obs}}", :left, 12))
 
-    p_pred = bar(x_bar, values_pred, xticks = xt,
-                 yticks = (0:0.2:1.0,[L"0.0", L"0.2", L"0.4", L"0.6", L"0.8", L"1.0"]),
-                 tickfontsize = 10, labelfontsize = 12, titlefontsize = 12,
-                 ylabel = L"\Delta", xrotation = 0, ylims = (0, 1.1), grid = false,
-                 legend = false, color = bar_colors, bottom_margin = 8mm)
-    annotate!(p_pred,-2, 1.3, text(L"(b)", :left, 12))
+    p_pred = bar(x_bar, values_pred; common...)
+    annotate!(p_pred, -2, 1.25, text(L"(b)", :left, 12))
     annotate!(p_pred, 6.35, 1.2, text(L"y_{\mathrm{pred}}", :left, 12))
-    
-    p = plot(p_fit, p_pred, layout=(1,2), size=(550,200),leftmargin=4mm,topmargin=7mm)
+
+    p = plot(p_fit, p_pred, layout=(1, 2), size=(760, 280),
+             leftmargin=4mm, topmargin=7mm)
 
     display(p)
     savefig(p, "$path\\Coral_Reduced.pdf")
