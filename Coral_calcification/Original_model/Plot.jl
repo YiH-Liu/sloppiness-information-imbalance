@@ -14,7 +14,7 @@ include("Print_Sloppy_Analysis_Table.jl")
 
 function Plot_info_imb()
     @load "$path\\Δ.jld2" Δ   
-    x_label = vcat([latexstring("\\hat{\\theta}^{$i}") for i in 1:20],
+    x_label = vcat([latexstring("\\hat{\\theta}^{($i)}") for i in 1:20],
                    [L"\theta"])
 
     values = Δ
